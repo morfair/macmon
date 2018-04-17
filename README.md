@@ -25,15 +25,8 @@ CREATE SCHEMA api_mac_address;
 ALTER SCHEMA api_mac_address OWNER TO common;
 ```
 
-https://github.com/michelp/pgjwt
-```
-CREATE EXTENSION IF NOT EXISTS pgjwt;
-COMMENT ON EXTENSION pgjwt IS 'JSON Web Token API for Postgresql';
+Install `pgjwt` module from https://github.com/michelp/pgjwt
 
-CREATE TYPE public.jwt_token AS (
- token text
-);
-```
 First we’ll need a table to keep track of our users:
 ```
 CREATE SCHEMA basic_auth;
