@@ -135,6 +135,8 @@ GRANT web_anon TO authenticator;
 
 GRANT USAGE ON SCHEMA api_mac_address TO authenticator;
 GRANT USAGE ON SCHEMA api_mac_address TO web_anon;
+GRANT USAGE ON SCHEMA basic_auth TO web_anon;
+GRANT USAGE ON SCHEMA basic_auth TO authenticator;
 GRANT ALL ON FUNCTION api_mac_address.login(email text, pass text) TO authenticator;
 GRANT SELECT ON TABLE basic_auth.users TO web_anon;
 GRANT SELECT ON TABLE basic_auth.users TO authenticator;
