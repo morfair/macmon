@@ -33,10 +33,10 @@ CREATE SCHEMA basic_auth;
 ALTER SCHEMA basic_auth OWNER TO common;
 
 CREATE TABLE basic_auth.users (
+	id serial,
     email text NOT NULL,
     pass text NOT NULL,
     role name NOT NULL,
-    id integer NOT NULL,
     CONSTRAINT users_email_check CHECK ((email ~* '^.+@.+\..+$'::text)),
     CONSTRAINT users_pass_check CHECK ((length(pass) < 512)),
     CONSTRAINT users_role_check CHECK ((length((role)::text) < 512))
@@ -91,10 +91,12 @@ $$;
 ```
 Create public user interface for Log-In:
 ```
-CREATE TYPE jwt_token AS (
+CREATE TYPE basic_auth.jwt_token AS (
   token text
 );
-
+```
+and then:
+```
 CREATE FUNCTION api_mac_address.login(email text, pass text) RETURNS basic_auth.jwt_token
     LANGUAGE plpgsql
     AS $$
@@ -143,4 +145,19 @@ ALTER DATABASE mac_address SET "app.jwt_secret" TO 'reallyreallyreallyreallyvery
 Front-end user add:
 ```
 INSERT INTO basic_auth.users (email, pass, role) VALUES ('admin@local.domain', 'SuperPass', 'common');
+```
+
+Next create our app-table:
+```
+CREATE TABLE api_mac_address.macs (
+    id serial,
+    mac macaddr NOT NULL,
+    host inet NOT NULL,
+    unit integer NOT NULL,
+    port integer NOT NULL,
+    datetime timestamp without time zone DEFAULT now() NOT NULL,
+    "desc" text,
+    status integer DEFAULT 0 NOT NULL
+);
+ALTER TABLE api_mac_address.macs OWNER TO common;
 ```
