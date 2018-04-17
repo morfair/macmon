@@ -23,12 +23,6 @@ CREATE ROLE common;
 CREATE SCHEMA api_mac_address;
 ALTER SCHEMA api_mac_address OWNER TO common;
 
-CREATE SCHEMA basic_auth;
-ALTER SCHEMA basic_auth OWNER TO common;
-
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
-
 -- https://github.com/michelp/pgjwt
 CREATE EXTENSION IF NOT EXISTS pgjwt;
 COMMENT ON EXTENSION pgjwt IS 'JSON Web Token API for Postgresql';
@@ -36,6 +30,82 @@ COMMENT ON EXTENSION pgjwt IS 'JSON Web Token API for Postgresql';
 CREATE TYPE public.jwt_token AS (
  token text
 );
+
+--
+-- First we’ll need a table to keep track of our users:
+--
+
+CREATE SCHEMA basic_auth;
+ALTER SCHEMA basic_auth OWNER TO common;
+
+CREATE TABLE basic_auth.users (
+    email text NOT NULL,
+    pass text NOT NULL,
+    role name NOT NULL,
+    id integer NOT NULL,
+    CONSTRAINT users_email_check CHECK ((email ~* '^.+@.+\..+$'::text)),
+    CONSTRAINT users_pass_check CHECK ((length(pass) < 512)),
+    CONSTRAINT users_role_check CHECK ((length((role)::text) < 512))
+);
+
+--
+-- We would like the role to be a foreign key to actual database roles,
+-- owever PostgreSQL does not support these constraints against the `pg_roles` table.
+-- We’ll use a trigger to manually enforce it.
+--
+
+CREATE FUNCTION basic_auth.check_role_exists() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+begin
+  if not exists (select 1 from pg_roles as r where r.rolname = new.role) then
+    raise foreign_key_violation using message =
+      'unknown database role: ' || new.role;
+    return null;
+  end if;
+  return new;
+end
+$$;
+
+CREATE CONSTRAINT TRIGGER ensure_user_role_exists AFTER INSERT OR UPDATE ON basic_auth.users NOT DEFERRABLE INITIALLY IMMEDIATE FOR EACH ROW EXECUTE PROCEDURE basic_auth.check_role_exists();
+
+--
+-- Next we’ll use the pgcrypto extension and a trigger to keep passwords safe in the `users` table.
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+CREATE FUNCTION basic_auth.encrypt_pass() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+begin
+  if tg_op = 'INSERT' or new.pass <> old.pass then
+    new.pass = crypt(new.pass, gen_salt('bf'));
+  end if;
+  return new;
+end
+$$;
+
+-- 
+-- It returns the database role for a user if the email and password are correct.
+-- 
+
+CREATE FUNCTION basic_auth.user_role(email text, pass text) RETURNS name
+    LANGUAGE plpgsql
+    AS $$
+begin
+  return (
+  select role from basic_auth.users
+   where users.email = user_role.email
+     and users.pass = crypt(user_role.pass, users.pass)
+  );
+end;
+$$;
+
+
+-- 
+-- Public User Interface for Log-In
+-- 
 
 CREATE FUNCTION api_mac_address.login(email text, pass text) RETURNS basic_auth.jwt_token
     LANGUAGE plpgsql
@@ -61,69 +131,21 @@ begin
   return result;
 end;
 $$;
-
 ALTER FUNCTION api_mac_address.login(email text, pass text) OWNER TO common;
 
-CREATE FUNCTION basic_auth.check_role_exists() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-begin
-  if not exists (select 1 from pg_roles as r where r.rolname = new.role) then
-    raise foreign_key_violation using message =
-      'unknown database role: ' || new.role;
-    return null;
-  end if;
-  return new;
-end
-$$;
+-- 
+-- Permissions
+-- 
 
-CREATE FUNCTION basic_auth.encrypt_pass() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-begin
-  if tg_op = 'INSERT' or new.pass <> old.pass then
-    new.pass = crypt(new.pass, gen_salt('bf'));
-  end if;
-  return new;
-end
-$$;
+CREATE ROLE web_anon;
+CREATE ROLE authenticator NOINHERIT;
+GRANT web_anon TO authenticator;
 
-CREATE FUNCTION basic_auth.user_role(email text, pass text) RETURNS name
-    LANGUAGE plpgsql
-    AS $$
-begin
-  return (
-  select role from basic_auth.users
-   where users.email = user_role.email
-     and users.pass = crypt(user_role.pass, users.pass)
-  );
-end;
-$$;
-
-CREATE TABLE api_mac_address.macs (
-    id integer NOT NULL,
-    mac macaddr NOT NULL,
-    host inet NOT NULL,
-    unit integer NOT NULL,
-    port integer NOT NULL,
-    datetime timestamp without time zone DEFAULT now() NOT NULL,
-    "desc" text,
-    status integer DEFAULT 0 NOT NULL
-);
-ALTER TABLE api_mac_address.macs OWNER TO common;
-
-CREATE TABLE basic_auth.users (
-    email text NOT NULL,
-    pass text NOT NULL,
-    role name NOT NULL,
-    id integer NOT NULL,
-    CONSTRAINT users_email_check CHECK ((email ~* '^.+@.+\..+$'::text)),
-    CONSTRAINT users_pass_check CHECK ((length(pass) < 512)),
-    CONSTRAINT users_role_check CHECK ((length((role)::text) < 512))
-);
-ALTER TABLE basic_auth.users OWNER TO common;
-
-
-CREATE TRIGGER encrypt_pass BEFORE INSERT OR UPDATE ON basic_auth.users FOR EACH ROW EXECUTE PROCEDURE basic_auth.encrypt_pass();
+GRANT USAGE ON SCHEMA api_mac_address TO authenticator;
+GRANT USAGE ON SCHEMA api_mac_address TO web_anon;
+GRANT ALL ON FUNCTION api_mac_address.login(email text, pass text) TO authenticator;
+GRANT SELECT ON TABLE basic_auth.users TO web_anon;
+GRANT SELECT ON TABLE basic_auth.users TO authenticator;
+GRANT SELECT ON TABLE pg_catalog.pg_authid TO web_anon;
 
 ```
