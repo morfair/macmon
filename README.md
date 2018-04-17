@@ -33,7 +33,7 @@ CREATE SCHEMA basic_auth;
 ALTER SCHEMA basic_auth OWNER TO common;
 
 CREATE TABLE basic_auth.users (
-	id serial,
+    id serial,
     email text NOT NULL,
     pass text NOT NULL,
     role name NOT NULL,
