@@ -10,6 +10,8 @@ Store MAC-address learned by your L2-switches in database and get alarm from Zab
  - SNMPTT (http://snmptt.sourceforge.net/);
  - Snmptrapd (http://net-snmp.sourceforge.net/docs/man/snmptrapd.html);
 
+## Screenshots
+![alt text](https://raw.githubusercontent.com/morfair/macmon/master/doc/mac_list.png)
 
 ## Database
 Use PostgreSQL database with PostgREST HTTP REST API . Use PostgREST documentation for installation. Note you may want to use Nginx as front-end.
