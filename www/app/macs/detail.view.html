@@ -1,0 +1,40 @@
+<form name="form" ng-submit="form.$valid && vm.saveMac()" novalidate>
+
+  <div class="form-group">
+    <label for="addr">MAC address</label>
+    <input type="text" class="form-control" value="{{ vm.item.mac }}" readonly>
+  </div>
+
+  <div class="form-group">
+    <label for="host">SW Host</label>
+    <input type="text" class="form-control" value="{{ vm.item.host }}" readonly>
+  </div>
+
+  <div class="form-group">
+    <label for="host">Unit</label>
+    <input type="text" class="form-control" value="{{ vm.item.unit }}" readonly>
+  </div>
+
+  <div class="form-group">
+    <label for="host">Port</label>
+    <input type="text" class="form-control" value="{{ vm.item.port }}" readonly>
+  </div>
+
+  <!-- <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="confirmed" ng-model="vm.item.confirmed">
+    <label class="form-check-label" for="confirmed">Подтвежден</label>
+  </div> -->
+
+  <br />
+
+  <div class="form-group">
+    <label for="host">Комментарий</label>
+    <textarea class="form-control" ng-model="vm.item.desc">{{ vm.item.desc }}</textarea>
+  </div>
+
+  <br />
+
+  <button type="submit" class="btn btn-primary" ng-disabled="vm.loading">Submit</button>
+  <span class="oi oi-check" ng-show="vm.submitted">
+
+</form>
