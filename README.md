@@ -202,11 +202,11 @@ Connection successful
 Then you can proxy it with nginx:
 ```
 location /rpc/ {
- proxy_pass      http://192.168.235.190:5000;
+ proxy_pass      http://127.0.0.1:5000;
 }
 
 location /macs {
- proxy_pass      http://192.168.235.190:5000;
+ proxy_pass      http://127.0.0.1:5000;
 }
 ```
 
