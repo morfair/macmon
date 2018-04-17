@@ -1,5 +1,5 @@
 # macmon
-Store MAC-address learned by your L2-switches
+Store MAC-address learned by your L2-switches in database and get alarm from Zabbix.
 
 ### Dependencies:
  - PostgreSQL;
