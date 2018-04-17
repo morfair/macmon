@@ -11,7 +11,7 @@ Store MAC-address learned by your L2-switches
 
 
 ## Database
-Use PostgreSQL database with PostgREST HTTP REST API . Use PostgREST documentation for installation. Note yoy may want to use Nginx in add-on.
+Use PostgreSQL database with PostgREST HTTP REST API . Use PostgREST documentation for installation. Note you may want to use Nginx as front-end.
 
 Create database and roles:
 ```
@@ -144,5 +144,5 @@ ALTER DATABASE mac_address SET "app.jwt_secret" TO 'reallyreallyreallyreallyvery
 
 Front-end user add:
 ```
-INSERT INTO basic_auth.users (email, pass, role) values ('admin@local.domain', 'SuperPass', 'common');
+INSERT INTO basic_auth.users (email, pass, role) VALUES ('admin@local.domain', 'SuperPass', 'common');
 ```
