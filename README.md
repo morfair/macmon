@@ -22,19 +22,19 @@ CREATE ROLE common;
 ```
 CREATE SCHEMA api_mac_address;
 ALTER SCHEMA api_mac_address OWNER TO common;
+```
 
--- https://github.com/michelp/pgjwt
+https://github.com/michelp/pgjwt
+```
 CREATE EXTENSION IF NOT EXISTS pgjwt;
 COMMENT ON EXTENSION pgjwt IS 'JSON Web Token API for Postgresql';
 
 CREATE TYPE public.jwt_token AS (
  token text
 );
-
---
--- First we’ll need a table to keep track of our users:
---
-
+```
+First we’ll need a table to keep track of our users:
+```
 CREATE SCHEMA basic_auth;
 ALTER SCHEMA basic_auth OWNER TO common;
 
@@ -47,13 +47,9 @@ CREATE TABLE basic_auth.users (
     CONSTRAINT users_pass_check CHECK ((length(pass) < 512)),
     CONSTRAINT users_role_check CHECK ((length((role)::text) < 512))
 );
-
---
--- We would like the role to be a foreign key to actual database roles,
--- owever PostgreSQL does not support these constraints against the `pg_roles` table.
--- We’ll use a trigger to manually enforce it.
---
-
+```
+We would like the role to be a foreign key to actual database roles, owever PostgreSQL does not support these constraints against the `pg_roles` table. We’ll use a trigger to manually enforce it.
+```
 CREATE FUNCTION basic_auth.check_role_exists() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
@@ -68,11 +64,9 @@ end
 $$;
 
 CREATE CONSTRAINT TRIGGER ensure_user_role_exists AFTER INSERT OR UPDATE ON basic_auth.users NOT DEFERRABLE INITIALLY IMMEDIATE FOR EACH ROW EXECUTE PROCEDURE basic_auth.check_role_exists();
-
---
--- Next we’ll use the pgcrypto extension and a trigger to keep passwords safe in the `users` table.
--- 
-
+```
+Next we’ll use the pgcrypto extension and a trigger to keep passwords safe in the `users` table.
+```
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
@@ -86,11 +80,9 @@ begin
   return new;
 end
 $$;
-
--- 
--- It returns the database role for a user if the email and password are correct.
--- 
-
+```
+It returns the database role for a user if the email and password are correct.
+```
 CREATE FUNCTION basic_auth.user_role(email text, pass text) RETURNS name
     LANGUAGE plpgsql
     AS $$
@@ -102,12 +94,9 @@ begin
   );
 end;
 $$;
-
-
--- 
--- Public User Interface for Log-In
--- 
-
+```
+Create public user interface for Log-In:
+```
 CREATE FUNCTION api_mac_address.login(email text, pass text) RETURNS basic_auth.jwt_token
     LANGUAGE plpgsql
     AS $$
@@ -133,11 +122,9 @@ begin
 end;
 $$;
 ALTER FUNCTION api_mac_address.login(email text, pass text) OWNER TO common;
-
--- 
--- Permissions
--- 
-
+```
+Set permissions:
+```
 CREATE ROLE web_anon;
 CREATE ROLE authenticator NOINHERIT;
 GRANT web_anon TO authenticator;
