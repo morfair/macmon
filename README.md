@@ -3,6 +3,7 @@ Store MAC-address learned by your L2-switches in database and get alarm from Zab
 
 ### Dependencies:
  - PostgreSQL;
+ - PostgreSQL contrib (https://www.postgresql.org/docs/9.6/static/contrib.html);
  - PostgREST (https://postgrest.com/);
  - PostgreSQL JWT (https://github.com/michelp/pgjwt);
  - python3;
