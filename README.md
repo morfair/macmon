@@ -71,6 +71,7 @@ CREATE CONSTRAINT TRIGGER ensure_user_role_exists AFTER INSERT OR UPDATE ON basi
 
 --
 -- Next we’ll use the pgcrypto extension and a trigger to keep passwords safe in the `users` table.
+-- 
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
@@ -147,5 +148,14 @@ GRANT ALL ON FUNCTION api_mac_address.login(email text, pass text) TO authentica
 GRANT SELECT ON TABLE basic_auth.users TO web_anon;
 GRANT SELECT ON TABLE basic_auth.users TO authenticator;
 GRANT SELECT ON TABLE pg_catalog.pg_authid TO web_anon;
+```
 
+Your JWT secret is stored as a property of the database `app.jwt_secret`. For update:
+```
+ALTER DATABASE mac_address SET "app.jwt_secret" TO 'reallyreallyreallyreallyverysafe';
+```
+
+Front-end user add:
+```
+INSERT INTO basic_auth.users (email, pass, role) values ('admin@local.domain', 'SuperPass', 'common');
 ```
