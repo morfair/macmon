@@ -163,3 +163,50 @@ CREATE TABLE api_mac_address.macs (
 );
 ALTER TABLE api_mac_address.macs OWNER TO common;
 ```
+## PostgREST
+This is `postgrest.conf` file:
+```
+db-uri = "postgres://authenticator:pass@pgsql-server.local.domain:5432/mac_address"
+db-schema = "api_mac_address"
+db-anon-role = "web_anon"
+db-pool = 10
+
+# server-host = "*4"
+server-host = "127.0.0.1"
+
+server-port = 5000
+
+## base url for swagger output
+# server-proxy-uri = ""
+
+## choose a secret to enable JWT auth
+## (use "@filename" to load from separate file)
+jwt-secret = "reallyreallyreallyreallyverysafe"
+# secret-is-base64 = false
+# jwt-aud = "your_audience_claim"
+
+## limit rows in response
+# max-rows = 1000
+
+## stored proc to exec immediately after auth
+# pre-request = "stored_proc_name"
+```
+Start it:
+```
+root@webserver:/opt/postgrest# ./postgrest postgrest.conf 
+Listening on port 5000
+Attempting to connect to the database...
+Connection successful
+
+```
+Then you can proxy it with nginx:
+```
+location /rpc/ {
+ proxy_pass      http://192.168.235.190:5000;
+}
+
+location /macs {
+ proxy_pass      http://192.168.235.190:5000;
+}
+```
+
