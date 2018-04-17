@@ -128,7 +128,7 @@ ALTER FUNCTION api_mac_address.login(email text, pass text) OWNER TO common;
 Set permissions:
 ```
 CREATE ROLE web_anon;
-CREATE ROLE authenticator NOINHERIT;
+CREATE ROLE authenticator WITH LOGIN NOINHERIT;
 GRANT web_anon TO authenticator;
 
 GRANT USAGE ON SCHEMA api_mac_address TO authenticator;
