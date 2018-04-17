@@ -2,7 +2,7 @@
 Store MAC-address learned by your L2-switches in database and get alarm from Zabbix.
 
 ### Dependencies:
- - PostgreSQL;
+ - PostgreSQL 9.6;
  - PostgreSQL contrib (https://www.postgresql.org/docs/9.6/static/contrib.html);
  - PostgREST (https://postgrest.com/);
  - PostgreSQL JWT (https://github.com/michelp/pgjwt);
@@ -25,7 +25,7 @@ CREATE SCHEMA api_mac_address;
 ALTER SCHEMA api_mac_address OWNER TO common;
 ```
 
-Install `pgjwt` module from https://github.com/michelp/pgjwt
+Install `pgjwt` module from https://github.com/michelp/pgjwt.
 
 First we’ll need a table to keep track of our users:
 ```
@@ -75,7 +75,7 @@ begin
 end
 $$;
 ```
-It returns the database role for a user if the email and password are correct.
+It returns the database role for a user if the email and password are correct:
 ```
 CREATE FUNCTION basic_auth.user_role(email text, pass text) RETURNS name
     LANGUAGE plpgsql
@@ -91,6 +91,10 @@ $$;
 ```
 Create public user interface for Log-In:
 ```
+CREATE TYPE jwt_token AS (
+  token text
+);
+
 CREATE FUNCTION api_mac_address.login(email text, pass text) RETURNS basic_auth.jwt_token
     LANGUAGE plpgsql
     AS $$
