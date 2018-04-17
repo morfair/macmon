@@ -74,6 +74,8 @@ begin
   return new;
 end
 $$;
+
+CREATE TRIGGER encrypt_pass BEFORE INSERT OR UPDATE ON basic_auth.users FOR EACH ROW EXECUTE PROCEDURE basic_auth.encrypt_pass();
 ```
 It returns the database role for a user if the email and password are correct:
 ```
