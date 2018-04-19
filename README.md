@@ -95,6 +95,9 @@ $$;
 ```
 Create public user interface for Log-In:
 ```
+CREATE EXTENSION pgjwt;
+```
+```
 CREATE TYPE basic_auth.jwt_token AS (
   token text
 );
