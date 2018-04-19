@@ -232,6 +232,7 @@ date_time_format = %H:%M:%S %Y/%m/%d
 snmptt_conf_files = <<END
 /etc/snmp/snmptt.conf
 /etc/snmp/snmptt.conf.dlink
+/etc/snmp/snmptt.conf.cisco
 END
 ```
 In `dlink_mac_notification_parse.py` script change PostgREST API server settings.
