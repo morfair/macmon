@@ -249,3 +249,18 @@ Then restart service:
 ```
 /etc/init.d/snmptrapd restart
 ```
+
+## Switches
+### D-Link
+For *DES-3200* in web-interface go Configuration - MAC Notification Settings - MAC Notification Global Settings - Enable, MAC Notification Port Settings - Enable on all ports.
+
+### Cisco
+For *Cisco Catalyst 3750* in console:
+```
+snmp-server enable traps mac-notification change move threshold
+snmp-server host 192.168.0.2 public mac-notification snmp
+mac address-table notification change
+interface range GigabitEthernet 1/0/1-24
+! (config-if-range):
+ snmp trap mac-notification change added
+```
