@@ -218,3 +218,26 @@ location /macs {
 }
 ```
 
+## SNMPTT
+Copy `snmp.conf*` files from snmptt repo folder to `/etc/snmp` (for Debian). Copy scripts to `/opt/snmptt_mac_notification` directory. If your choose another scripts diretory, edit `snmp.conf*` files.
+Edit `snmptt.ini` according it's manual. Some settings:
+```
+date_time_format = %H:%M:%S %Y/%m/%d
+
+snmptt_conf_files = <<END
+/etc/snmp/snmptt.conf
+/etc/snmp/snmptt.conf.dlink
+END
+```
+In `dlink_mac_notification_parse.py` script change PostgREST API server settings.
+
+## SNMPTRAPD
+Edit `/etc/snmp/snmptrapd.conf` file:
+```
+disableAuthorization yes
+traphandle default /usr/sbin/snmptt
+```
+Then restart service:
+```
+/etc/init.d/snmptrapd restart
+```
