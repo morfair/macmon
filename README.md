@@ -164,8 +164,7 @@ CREATE TABLE api_mac_address.macs (
     mac macaddr NOT NULL,
     host inet NOT NULL,
     host_vendor character varying(255),
-    port integer NOT NULL,
-    vendor
+    port character varying(24),
     datetime timestamp without time zone DEFAULT now() NOT NULL,
     "desc" text,
     status integer DEFAULT 0 NOT NULL
