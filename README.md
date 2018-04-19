@@ -226,6 +226,7 @@ apt-get install snmptt
 Copy `snmp.conf*` files from snmptt repo folder to `/etc/snmp` (for Debian). Copy scripts to `/opt/snmptt_mac_notification` directory. If your choose another scripts diretory, edit `snmp.conf*` files.
 Edit `snmptt.ini` according it's manual. Some settings:
 ```
+net_snmp_perl_enable = 1
 date_time_format = %H:%M:%S %Y/%m/%d
 
 snmptt_conf_files = <<END
