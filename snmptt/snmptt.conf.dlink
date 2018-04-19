@@ -1,0 +1,11 @@
+#
+# DES-3200-18 A1, MAC Notification 
+#
+EVENT macNotify .1.3.6.1.4.1.171.11.113.1.2.2.20.0.2 "Status Events" Normal
+FORMAT ZBXTRAP $aA MAC address $p2 $p1, port $p3, unit $p4
+PREEXEC /opt/snmptt_mac_notification/dlink_mac_notification_parse.py -s "$1" -t action
+PREEXEC /opt/snmptt_mac_notification/dlink_mac_notification_parse.py -s "$1" -t mac_addr
+PREEXEC /opt/snmptt_mac_notification/dlink_mac_notification_parse.py -s "$1" -t port
+PREEXEC /opt/snmptt_mac_notification/dlink_mac_notification_parse.py -s "$1" -t unit
+EXEC /opt/snmptt_mac_notification/dlink_mac_notification_parse.py -s "$1" -a --host $aA
+
