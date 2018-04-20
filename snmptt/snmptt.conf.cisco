@@ -1,0 +1,11 @@
+#
+# Cisco Catalyst 3750, MAC Notification 
+#
+EVENT macNotify iso.3.6.1.4.1.9.9.215.2.0.1 "Status Events" Normal
+FORMAT ZBXTRAP $aA MAC address $p2 $p1, port $p3, vlan $p4
+PREEXEC /opt/snmptt_mac_notification/mac_notification_parser.py -v cisco -s "$1" -t action
+PREEXEC /opt/snmptt_mac_notification/mac_notification_parser.py -v cisco -s "$1" -t mac_addr
+PREEXEC /opt/snmptt_mac_notification/mac_notification_parser.py -v cisco -s "$1" -t port  --host $aA
+PREEXEC /opt/snmptt_mac_notification/mac_notification_parser.py -v cisco -s "$1" -t vlan
+EXEC /opt/snmptt_mac_notification/mac_notification_parser.py -v cisco -s "$1" -a --host $aA
+

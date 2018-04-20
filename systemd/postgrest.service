@@ -1,0 +1,12 @@
+[Unit]
+Description=PostgREST service
+Wants=nginx.service
+ 
+[Service]
+ExecStart=/opt/postgrest /opt/postgrest.conf
+PIDFile=/run/postgrest.pid
+
+ 
+[Install]
+WantedBy=multi-user.target
+

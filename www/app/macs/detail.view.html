@@ -2,22 +2,27 @@
 
   <div class="form-group">
     <label for="addr">MAC address</label>
-    <input type="text" class="form-control" value="{{ vm.item.mac }}" readonly>
+    <input id="addr" type="text" class="form-control" value="{{ vm.item.mac }}" readonly>
   </div>
 
   <div class="form-group">
-    <label for="host">SW Host</label>
-    <input type="text" class="form-control" value="{{ vm.item.host }}" readonly>
+    <label for="host">Host</label>
+    <input id="host" type="text" class="form-control" value="{{ vm.item.host }}" readonly>
   </div>
 
   <div class="form-group">
-    <label for="host">Unit</label>
-    <input type="text" class="form-control" value="{{ vm.item.unit }}" readonly>
+    <label for="host_vendor">Host Vendor</label>
+    <input id="host_vendor" type="text" class="form-control" value="{{ vm.item.host_vendor }}" readonly>
   </div>
 
   <div class="form-group">
-    <label for="host">Port</label>
-    <input type="text" class="form-control" value="{{ vm.item.port }}" readonly>
+    <label for="vlan">VLAN</label>
+    <input id="vlan" type="text" class="form-control" value="{{ vm.item.vlan }}" readonly>
+  </div>
+
+  <div class="form-group">
+    <label for="port">Port</label>
+    <input id="port" type="text" class="form-control" value="{{ vm.item.port }}" readonly>
   </div>
 
   <!-- <div class="form-check">
@@ -28,8 +33,8 @@
   <br />
 
   <div class="form-group">
-    <label for="host">Комментарий</label>
-    <textarea class="form-control" ng-model="vm.item.desc">{{ vm.item.desc }}</textarea>
+    <label for="desc">Description</label>
+    <textarea id="desc" class="form-control" ng-model="vm.item.desc">{{ vm.item.desc }}</textarea>
   </div>
 
   <br />

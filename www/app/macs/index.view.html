@@ -3,15 +3,16 @@
 <table class="table table-hover table-sm" st-table="displayedCollection" st-safe-src="vm.macsCollection">
 	<thead class="thead-dark">
 		<tr>
-			<th scope="col"></th>
-			<th scope="col" st-sort="mac">MAC address <span class="oi oi-elevator"></span></th>
-			<th scope="col" st-sort="host">Host <span class="oi oi-elevator"></span></th>
-			<th scope="col">Unit</th>
-			<th scope="col">Port</th>
-			<th scope="col" st-sort="datetime">Date of Find <span class="oi oi-elevator"></span></th>
+			<th scope="col">#</th>
+			<th scope="col" st-sort="mac">MAC address <span class="oi oi-resize-height"></span></th>
+			<th scope="col" st-sort="host">Host <span class="oi oi-resize-height"></span></th>
+			<th scope="col" st-sort="host_vendor">Host Vendor <span class="oi oi-resize-height"></span></th>
+			<th scope="col" st-sort="vlan">VLAN <span class="oi oi-resize-height"></span></th>
+			<th scope="col" st-sort="port">Port <span class="oi oi-resize-height"></span></th>
+			<th scope="col" st-sort="datetime">Date of Find <span class="oi oi-resize-height"></span></th>
 			<th scope="col">Description</th>
 			<!-- <th></th> -->
-			<th scope="col" st-sort="confirmed">Confirmed <span class="oi oi-elevator"></span></th>
+			<th scope="col" st-sort="confirmed">Confirmed <span class="oi oi-resize-height"></span></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -19,7 +20,8 @@
 			<th>{{ mac.id }}</th>
 			<td>{{ mac.mac }}</td>
 			<td>{{ mac.host }}</td>
-			<td>{{ mac.unit }}</td>
+			<td>{{ mac.host_vendor }}</td>
+			<td>{{ mac.vlan }}</td>
 			<td>{{ mac.port }}</td>
 			<td>{{ mac.datetime | date:"dd-MM-yy HH:mm" }}</td>
 			<td editable-text="mac.desc">

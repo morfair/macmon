@@ -14,7 +14,7 @@ angular
 
 		// console.log("MacListCtrl");
 
-		$http.get("/macs?order=status").then(
+		$http.get("/macs?order=datetime.desc").then(
 			function(res) {
 				// console.log(res);
 				vm.macsCollection = res.data;
