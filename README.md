@@ -163,8 +163,9 @@ CREATE TABLE api_mac_address.macs (
     id serial,
     mac macaddr NOT NULL,
     host inet NOT NULL,
-    unit integer NOT NULL,
-    port integer NOT NULL,
+    host_vendor character varying(255),
+    vlan integer,
+    port character varying(24),
     datetime timestamp without time zone DEFAULT now() NOT NULL,
     "desc" text,
     status integer DEFAULT 0 NOT NULL
@@ -219,19 +220,29 @@ location /macs {
 ```
 
 ## SNMPTT
+Install  SNMPTT, for Debian:
+```
+apt-get install snmptt
+```
 Copy `snmp.conf*` files from snmptt repo folder to `/etc/snmp` (for Debian). Copy scripts to `/opt/snmptt_mac_notification` directory. If your choose another scripts diretory, edit `snmp.conf*` files.
 Edit `snmptt.ini` according it's manual. Some settings:
 ```
+net_snmp_perl_enable = 1
 date_time_format = %H:%M:%S %Y/%m/%d
 
 snmptt_conf_files = <<END
 /etc/snmp/snmptt.conf
 /etc/snmp/snmptt.conf.dlink
+/etc/snmp/snmptt.conf.cisco
 END
 ```
 In `dlink_mac_notification_parse.py` script change PostgREST API server settings.
 
 ## SNMPTRAPD
+Install SNMPTRAPD, for Debian:
+```
+apt-get install snmptrapd
+```
 Edit `/etc/snmp/snmptrapd.conf` file:
 ```
 disableAuthorization yes
@@ -240,4 +251,19 @@ traphandle default /usr/sbin/snmptt
 Then restart service:
 ```
 /etc/init.d/snmptrapd restart
+```
+
+## Switches
+### D-Link
+For *DES-3200* in web-interface go Configuration - MAC Notification Settings - MAC Notification Global Settings - Enable, MAC Notification Port Settings - Enable on all ports.
+
+### Cisco
+For *Cisco Catalyst 3750* in console:
+```
+snmp-server enable traps mac-notification change move threshold
+snmp-server host 192.168.0.2 public mac-notification snmp
+mac address-table notification change
+interface range GigabitEthernet 1/0/1-24
+! (config-if-range):
+ snmp trap mac-notification change added
 ```
